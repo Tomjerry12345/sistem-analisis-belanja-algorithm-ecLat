@@ -1,0 +1,50 @@
+[
+    [
+        "2021-01-11 12:38:30",
+        "8999999034061",
+        "ZWITSAL BAT NAT HAIR&BODY  300ML"
+    ],
+    [
+        "2021-01-11 12:38:30",
+        "809999034067",
+        "Test 1"
+    ],
+    [
+        "2021-01-11 12:38:35",
+        "97650000",
+        "Test 2"
+    ],
+    [
+        "2021-01-11 12:38:35",
+        "8774646466",
+        "Test 3"
+    ],
+    [
+        "2021-01-11 12:38:38",
+        "8774646466",
+        "Test 4"
+    ]
+],
+
+saya punya data seperti di atas, buatkan kodingan yang mengubah data di atas seperti bentuk data di bawah php
+
+[
+    {
+        "Date": "2021-01-11 12:38:30",
+        "Barcode": "8999999034061",
+        "Item-1": "ZWITSAL BAT NAT HAIR&BODY  300ML",
+        "Item-2" "Test 1"
+    },
+    {
+        "Date": "2021-01-11 12:38:35",
+        "Barcode": "97650000",
+        "Item-1": "Test 2",
+        "Item-2" "Test 3"
+    },
+    {
+        "Date": "2021-01-11 12:38:38",
+        "Barcode": "97650000",
+        "Item-1": "Test 4",
+        "Item-2" null
+    }
+]

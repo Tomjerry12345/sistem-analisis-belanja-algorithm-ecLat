@@ -1,0 +1,136 @@
+<style>
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  background-color: #000000;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+  z-index: 1;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+}
+ 
+.sidebar a.active {
+  background-color: #009688;
+  color: white;
+}
+
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+div.content {
+  margin-left: 250px;
+  padding: 1px 16px;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.lni {
+    width:20px !important;
+    margin-right:12px;
+}
+
+.size-fa {
+  color:white;
+  font-size:44px;
+}
+
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    height: 100%;
+    overflow: hidden;
+    transition: 0.5s;
+  }
+  
+  .sidebar.show-menu {
+    width: 250px;
+    margin-top: 56px;
+  }
+  
+  .sidebar a {
+    float: none;
+  }
+  
+  .menu-toggle {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    background-color: #f1f1f1;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+  }
+  
+  div.content {
+    margin-left: 0;
+    padding-top: 60px; /* Tambahkan padding top agar konten tidak tertutup */
+  }
+ 
+}
+body{
+     background:#fafbfe;
+}
+.btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 0%);
+}
+.menu-toggle {
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-toggle span {
+      margin-left: 5px;
+    }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+  }
+
+  .sidebar a i {
+    margin-right: 10px;
+  }
+  .bg-primary2 {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
+}
+.shadow-1, .popover, .card-raised {
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+}
+.card-raised {
+    border: none;
+}
+.card {
+    line-height: 1.25rem;
+    color: #000;
+}
+@media (max-width: 767px) {
+  img {
+    width: 100%;
+  }
+}
+
+</style>
