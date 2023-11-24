@@ -16,7 +16,7 @@
     <div class="content pb-3">
         <div class="container pt-3">
             <h3>Frequent Item Sets Group</h3>
-            Item & TD List
+            Item & TID List
             <hr>
 
             <div class="mt-5">

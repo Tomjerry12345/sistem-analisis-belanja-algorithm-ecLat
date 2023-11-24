@@ -34,7 +34,7 @@ foreach ($ss_minsup as $sss) {
 <html>
 
 <head>
-    <title>Kombinasi Eclat</title>
+    <title>Kombinasi Asosiasi</title>
     <?php include "head.php"; ?>
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <style>
@@ -62,19 +62,22 @@ foreach ($ss_minsup as $sss) {
 
     <div class="content pb-3">
         <div class="container pt-3">
-            <h3>Kombinasi Algoritma EClaT
+            <h3>Kombinasi Aturan Asosiasi
                 <br>
-                <!-- <font color=red>Proses Tampil 25 Menit - 2 Jam (Tergantung Jumlah Data)</font> -->
+
             </h3>
             Kombinasi, Support A, Support A,B, Confidence (A,B)
             <hr>
 
+            <font style="font-family: 'Lucida Sans';" color=red>Jumlah Transaksi Sebanyak 1550 dengan Jumlah Item Sebanyak 501</font>
+            <br>
+            <br>
             <form action="" method="POST">
-                <label for="minsup">Masukkan Minimal Support:</label>
-                <input type="text" name="minsup" id="minsup" value="<?= $minimsl_sup ?>" style="padding: 5px; width: 80px;">
+                <label for="minsup">Masukkan Minimal Support (%):</label>
+                <input type="text" name="minsup" id="minsup" value="<?= $minimsl_sup ?>" style="padding: 5px; width: 50px;">
 
-                <label for="minconf">Masukkan Minimal Confidance:</label>
-                <input type="text" name="minconf" id="minconf" value="<?= $minimsl_conf ?>" style="padding: 5px; width: 80px;">
+                <label for="minconf">Masukkan Minimal Confidance (%):</label>
+                <input type="text" name="minconf" id="minconf" value="<?= $minimsl_conf ?>" style="padding: 5px; width: 50px;">
                 <button type="submit" name="kirim_minsup" style="color: #fff; background-color: #007bff; border-color: #007bff; padding: 7px; border: none;">Lihat
                     Kirim</button>
             </form>
@@ -82,7 +85,7 @@ foreach ($ss_minsup as $sss) {
 
             <form action="" method="POST">
                 <label for="month">Pilih Bulan:</label>
-                <select name="bulan" id="bulan">
+                <select name="bulan" id="bulan" style="width: 120px;">
                     <?php
                     $months = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
                     foreach ($months as $key => $value) {
@@ -96,7 +99,7 @@ foreach ($ss_minsup as $sss) {
                 </select>
 
                 <label for="tahun">Pilih Tahun:</label>
-                <select name="tahun" id="tahun">
+                <select name="tahun" id="tahun" style="width: 120px;">
                     <?php
                     $years = array('2021');
                     foreach ($years as $year) {
@@ -105,21 +108,6 @@ foreach ($ss_minsup as $sss) {
                             echo ' selected="selected"';
                         }
                         echo ">$year</option>";
-                    }
-                    ?>
-                </select>
-
-                <label for="minggu">Pilih Minggu:</label>
-                <select name="minggu" id="minggu">
-                    <?php
-                    $weeks = array('Minggu Ke-1', 'Minggu Ke-2', 'Minggu Ke-3', 'Minggu Ke-4');
-                    foreach ($weeks as $key => $value) {
-                        $optionValue = $key + 1;
-                        echo "<option value=\"$optionValue\"";
-                        if (isset($_POST['minggu']) && $_POST['minggu'] == $optionValue) {
-                            echo ' selected="selected"';
-                        }
-                        echo ">$value</option>";
                     }
                     ?>
                 </select>
@@ -220,6 +208,45 @@ foreach ($ss_minsup as $sss) {
                             return [$topItem];
                         }
 
+                        // function findAssociation($tidsets, $purchases)
+                        // {
+                        //     $associatedItems = [];
+                        //     $transactionList = [];
+
+                        //     foreach ($purchases as $purchase) {
+                        //         $transactionList[] = $tidsets[$purchase];
+                        //     }
+
+                        //     // Menemukan item yang ada di semua transaksi
+                        //     $commonTransactions = call_user_func_array('array_intersect', $transactionList);
+
+                        //     foreach ($commonTransactions as $commonTransaction) {
+                        //         foreach ($tidsets as $item => $tidList) {
+                        //             if (in_array($commonTransaction, $tidList) && !in_array($item, $purchases)) {
+                        //                 $associatedItems[] = $item;
+                        //             }
+                        //         }
+                        //     }
+
+                        //     $uniqueItems = array_unique($associatedItems);
+
+                        //     // Mengembalikan satu item saja
+                        //     if (!empty($uniqueItems)) {
+                        //         $result = [];
+                        //         foreach ($uniqueItems as $item) {
+                        //             if (!empty($item)) {
+                        //                 $result[] = $item;
+                        //                 break; // Menghentikan iterasi setelah menemukan item yang tidak kosong
+                        //             }
+                        //         }
+
+                        //         return $result;
+                        //     }
+
+                        //     return []; // Jika tidak ada item yang terkait
+                        // }
+
+
 
 
                         // Fungsi untuk menghitung support
@@ -228,13 +255,20 @@ foreach ($ss_minsup as $sss) {
                         //     return count($tidsets[$item]);
                         // }
 
-                        function calculateSupport($tidsets, $items)
+                        function calculateSupport($tidsets, $items, $sizeData)
                         {
-                            $commonTransactions = call_user_func_array('array_intersect', array_map(function ($item) use ($tidsets) {
-                                return $tidsets[$item];
-                            }, $items));
+                            $sumSupport = 0;
 
-                            return count($commonTransactions);
+                            foreach ($items as $i) {
+                                $getCount = count($tidsets[$i]);
+                                $sumSupport += $getCount;
+                            }
+
+                            // echo '<pre>';
+                            // print_r($sumSupport);
+                            // echo '</pre>';
+
+                            return $sumSupport / $sizeData;
                         }
 
                         function calculateSupportForItems($tidsets, $items, $associatedItem)
@@ -254,10 +288,13 @@ foreach ($ss_minsup as $sss) {
 
                         if ($tahun != null) {
                             // logO($tahun);
-                            $data = $conn->query("SELECT * FROM tbl_transaksi WHERE YEAR(tanggal) = $tahun AND MONTH(tanggal) = $bulan AND FLOOR((DAYOFMONTH(tanggal) - 1) / 7) + 1 = $minggu");
+                            $data = $conn->query("SELECT * FROM tbl_transaksi WHERE YEAR(tanggal) = $tahun AND MONTH(tanggal) = $bulan");
 
+                            $lengthData = $data->num_rows;
 
                             $tidsets = calculateTIDsets($data);
+
+                            $j = 0;
 
                             foreach ($data as $d) {
                                 $itemsToAnalyze = [
@@ -268,20 +305,44 @@ foreach ($ss_minsup as $sss) {
                                 $itemsToAnalyze = array_filter($itemsToAnalyze);
 
                                 $associatedItems = findAssociation($tidsets, $itemsToAnalyze);
-                                $supportA = calculateSupport($tidsets, $itemsToAnalyze);
+
+                                $supportA = calculateSupport($tidsets, $itemsToAnalyze, $lengthData);
+                                // echo '<pre>';
+                                // print_r($supportA);
+                                // echo '</pre>';
+                                // return;
                                 $supportAB = calculateSupportForItems($tidsets, $itemsToAnalyze, $associatedItem);
                                 $confidence = $supportAB / $supportA;
 
-                                // logO($associatedItems);
-
                                 if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup && $supportAB >= $minimsl_sup) {
                                     if ($associatedItems[0] != "") {
+                                        // echo '<pre>';
+                                        // print_r($itemsToAnalyze);
+                                        // print_r("support: " . round($supportA, 2));
+                                        // print_r("\n");
+                                        // print_r("jumlah " . $itemsToAnalyze[0] . ": " . count($tidsets[$itemsToAnalyze[0]]));
+                                        // print_r("\n");
+                                        // print_r("jumlah " . $itemsToAnalyze[1] . ": " . count($tidsets[$itemsToAnalyze[1]]));
+                                        // print_r("\n");
+                                        // print_r("jumlah Data: " . $data->num_rows);
+                                        // print_r("\n");
+                                        // print_r("support real : " . (count($tidsets[$itemsToAnalyze[0]]) + count($tidsets[$itemsToAnalyze[1]])) / $data->num_rows);
+                                        // echo '</pre>';
+
                                         echo "<tr>";
+                                        // echo "<td>Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems) . "\n";
                                         echo "<td>Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems) . "\n";
                                         echo "<td>" . round($supportA, 2) . "%</td>";
                                         echo "<td>" . round($supportAB, 2) . "%</td>";
                                         echo "<td>" . round($confidence, 2) . "%</td>";
                                         echo "</tr>";
+
+                                        // if ($j > 1) {
+                                            // return;
+                                        // }
+
+
+                                        $j++;
                                     }
                                 }
                             }

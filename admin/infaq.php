@@ -12,8 +12,15 @@
         // die(print_r($tahunn));
     }
 
-    $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE date LIKE '%%/$bulann/$tahunn%%' ";
+    // $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE date LIKE '%%/$bulann/$tahunn%%' ";
+    // $result = $conn->query($query);
+
+    $bulan = str_pad($bulann, 2, '0', STR_PAD_LEFT); // Menambahkan leading zero jika bulan hanya satu digit
+    $tahun = str_pad($tahunn, 4, '0', STR_PAD_LEFT); // Menambahkan leading zero jika tahun hanya satu digit
+
+    $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE DATE_FORMAT(date, '%Y-%m') = '$tahun-$bulan'";
     $result = $conn->query($query);
+
 
     if ($result) {
         $row = $result->fetch_assoc();

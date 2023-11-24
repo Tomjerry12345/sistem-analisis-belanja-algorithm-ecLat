@@ -2,6 +2,34 @@
 error_reporting(0);
 include "../config/koneksi.php";
 
+function uploadInfaq($conn, $data)
+{
+
+    $date = mysqli_real_escape_string($conn, $data[0]);
+    $barcode = mysqli_real_escape_string($conn, $data[1]);
+    $name = mysqli_real_escape_string($conn, $data[2]);
+    $count = intval($data[3]);
+    $price = floatval($data[4]);
+    $discount = floatval($data[5]);
+    $total = floatval($data[6]);
+    $buy_price = floatval($data[7]);
+    $margin = floatval($data[8]);
+
+    if (strcasecmp($name, "GULA 1 LITER") === 0) {
+        $margin -= 100 * $count;
+    }
+
+    // Query SQL untuk memasukkan data ke dalam tabel Anda
+    $query = "INSERT INTO tbl_infaq (date, barcode, name, count, price, discount, total, buy_price, margin) 
+            VALUES ('$date', '$barcode', '$name', $count, $price, $discount, $total, $buy_price, $margin)";
+
+    if ($conn->query($query) === TRUE) {
+        // echo "Data berhasil disimpan.<br>";
+    } else {
+        echo "Error: " . $query . "<br>" . $conn->error;
+    }
+}
+
 if (isset($_POST["upload-analisa"])) {
     $targetDir = "uploads/";
     $targetFile = $targetDir . "data.csv";
@@ -23,6 +51,9 @@ if (isset($_POST["upload-analisa"])) {
             $sql = "TRUNCATE TABLE tbl_transaksi";
             $result = $conn->query($sql);
 
+            $sql = "TRUNCATE TABLE tbl_infaq";
+            $result = $conn->query($sql);
+
             // Lokasi dan nama file CSV
             $csvFile = 'uploads/data.csv';
 
@@ -36,53 +67,46 @@ if (isset($_POST["upload-analisa"])) {
 
                 $result = [];
 
-                while (($line = fgetcsv($file)) !== false) {
-                    $dataSplit = explode(";", $line[0]);
-
+                while (($dataSplit = fgetcsv($file, 0, ";")) !== false) {
                     $date = $dataSplit[0];
                     $barcode = $dataSplit[1];
                     $itemName = $dataSplit[2];
+                    $count = $dataSplit[3];
 
-                    $index = array_search($date, array_column($result, 'tanggal'));
+                    $data_transaksi[$date][] = $itemName;
 
-                    if ($index === false) {
-                        $result[] = [
-                            "No" => count($result) + 1,
-                            "tanggal" => $date,
-                            "Transaksi_Id" => "TID_" . (count($result) + 1),
-                            // "Transaksi_Id" => $barcode,
-                            "Item_1" => $itemName,
-                        ];
-                    } else {
-                        $itemIndex = 1;
-                        while (isset($result[$index]["Item_$itemIndex"])) {
-                            $itemIndex++;
-                        }
-
-                        if ($itemIndex <= 16) {
-                            $result[$index]["Item_$itemIndex"] = $itemName;
-                        } else {
-                            // If Item-2 already exists, create a new entry
-                            $result[] = [
-                                "No" => count($result) + 1,
-                                "tanggal" => $date,
-                                // "Transaksi_Id" => $barcode,
-                                "Transaksi_Id" => "TID_" . (count($result) + 1),
-                                "Item_1" => $itemName,
-                            ];
-                        }
-                    }
+                    uploadInfaq($conn, $dataSplit);
                 }
 
-                foreach ($result as &$entry) {
-                    for ($i = 1; $i <= 16; $i++) {
-                        if (!isset($entry["Item_$i"])) {
-                            $entry["Item_$i"] = "";
-                        }
-                    }
-                }
+                $tidCounter = 1;
 
-                // echo json_encode($result, JSON_PRETTY_PRINT);
+                $result = array_map(function ($date, $items) use (&$tidCounter) {
+                    $no =  $tidCounter;
+                    $tid = 'TID_' . $tidCounter;
+                    $tidCounter++;
+
+                    return [
+                        'No' => $no,
+                        'tanggal' => $date,
+                        'Transaksi_Id' => $tid,
+                        'name' => $items
+                    ];
+                }, array_keys($data_transaksi), $data_transaksi);
+
+                $barang_df = array_map(function ($item) {
+                    return array_slice(array_pad($item['name'], 16, ''), 0, 16);
+                }, $result);
+
+
+                foreach ($result as $key => &$item) {
+                    $item = array_merge($item, array_combine(
+                        array_map(function ($i) {
+                            return 'Item_' . $i;
+                        }, range(1, 16)),
+                        $barang_df[$key]
+                    ));
+                    unset($item['name']);
+                }
 
                 $csvOutputFile = fopen($csvFile, 'w');
                 $csvHeader = ['No.', 'Date', 'Transaksi_Id', 'Item_1', 'Item_2', 'Item_3', 'Item_4', 'Item_5', 'Item_6', 'Item_7', 'Item_8', 'Item_9', 'Item_10', 'Item_11', 'Item_12', 'Item_13', 'Item_14', 'Item_15', 'Item_16'];
@@ -91,7 +115,7 @@ if (isset($_POST["upload-analisa"])) {
                 foreach ($result as $row) {
                     $csvRow = [
                         $row['No'],
-                        date('n/j/Y H:i', strtotime($row['tanggal'])),
+                        date('Y-m-d H:i:s', strtotime($row['tanggal'])),
                         $row['Transaksi_Id'],
                         $row['Item_1'],
                         $row['Item_2'],
@@ -117,8 +141,6 @@ if (isset($_POST["upload-analisa"])) {
                 // Menutup file CSV
                 fclose($csvOutputFile);
 
-                echo 'CSV file has been created successfully.';
-
                 foreach ($result as &$entry) {
                     $entry = array_map(function ($value) use ($conn) {
                         return "'" . mysqli_real_escape_string($conn, $value) . "'";
@@ -140,25 +162,6 @@ if (isset($_POST["upload-analisa"])) {
 
                 echo "succes";
 
-
-                // while (($line = fgetcsv($file)) !== false) {
-                //     // Mengganti tanggal dengan nilai yang sesuai dari $line
-                //     $escapedValues = array_map(function ($value) use ($conn) {
-                //         return "'" . mysqli_real_escape_string($conn, $value) . "'";
-                //     }, $line);
-
-                //     // Ganti indeks [1] dengan tanggal yang sesuai dari $line
-                //     $escapedValues[1] = "STR_TO_DATE({$escapedValues[1]}, '%m/%d/%Y %H:%i')";
-                //     $sql = "INSERT INTO tbl_transaksi (No, tanggal, Transaksi_Id, Item_1, Item_2, Item_3, Item_4, 
-                //             Item_5, Item_6, Item_7, Item_8, Item_9, Item_10, Item_11, Item_12, Item_13, Item_14, Item_15, Item_16) 
-                //             VALUES (" . implode(",", $escapedValues) . ")";
-
-                //     if ($conn->query($sql) !== true) {
-                //         //echo "Error: " . $sql . "<br>" . $conn->error;
-                //     }
-                // }
-
-
                 fclose($file);
                 header("Location: upload.php?status=berhasil1");
                 exit;
@@ -171,6 +174,7 @@ if (isset($_POST["upload-analisa"])) {
         }
     }
 }
+
 if (isset($_POST["upload-infaq"])) {
     $sql = "TRUNCATE TABLE tbl_infaq";
     $result = $conn->query($sql);
@@ -193,7 +197,7 @@ if (isset($_POST["upload-infaq"])) {
                 $isHeader = true;
 
                 // Baca baris demi baris dari file CSV
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
                     // Skip baris pertama (header)
                     if ($isHeader) {
                         $isHeader = false;

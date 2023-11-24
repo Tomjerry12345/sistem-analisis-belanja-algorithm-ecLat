@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Frequent Item Sets Total</title>
+    <title>Upload File CSV</title>
     <?php include "head.php"; ?>
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
@@ -15,13 +15,14 @@
     <div class="content pb-3">
     <div class="container mt-5">
         <h2 class="mb-4">Upload dan Simpan CSV</h2>
-
+        <br>
+        
         <div class="row">
             <!-- Kartu pertama -->
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Form Upload Analisa EClaT</h3>
+                        <h3 class="card-title">Form Upload Analisa EClaT dan Laporan Infaq</h3>
                         <form action="proses-upload.php" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="fileToUploadAnalisa">Pilih file CSV:</label>
@@ -34,7 +35,7 @@
             </div>
 
             <!-- Kartu kedua -->
-            <div class="col-md-12 pt-4">
+            <!-- <div class="col-md-12 pt-4">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Form Upload Analisa Keuntungan & Infaq</h3>
@@ -47,7 +48,7 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 

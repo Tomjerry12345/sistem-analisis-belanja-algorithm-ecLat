@@ -14,7 +14,7 @@
 
     <div class="content">
         <div class="container pt-3">
-            <h3>Halo! Selamat Datang di Halaman Administrator</h3>
+            <h2>Halo! Selamat Datang di Halaman Administrator</h2>
             Silahkan Gunakan Menu Untuk Melakukan Analisis Keranjang Belanja Menggunakan Algoritma Equivalence 
             Class Transformation (EClaT) Dalam Menentukan Strategi Pemasaran Produk
             <hr>

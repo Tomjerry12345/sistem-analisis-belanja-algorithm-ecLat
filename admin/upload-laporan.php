@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <!-- <div class="container mt-5">
         <h2>Upload File CSV Untuk Proses Analisis Belanja</h2>
         <form action="" method="post" enctype="multipart/form-data">
             <div class="form-group">
@@ -14,7 +14,7 @@
                 <input type="file" class="form-control-file" name="csvFile" id="csvFile" required>
             </div>
             <button type="submit" name="uploadBtn" class="btn btn-primary">Mulai Upload</button>
-        </form>
+        </form> -->
     
         <?php
         if (isset($_POST["uploadBtn"])) {
