@@ -129,9 +129,11 @@ foreach ($ss_minsup as $sss) {
 
                         <?php
 
-                        function logO($m)
+                        function logO($t, $m)
                         {
-                            print_r(json_encode($m, JSON_PRETTY_PRINT));
+                            echo '<pre>';
+                            print_r($t . ": " . json_encode($m, JSON_PRETTY_PRINT));
+                            echo '</pre>';
                         }
 
                         function calculateTIDsets($transactions)
@@ -183,12 +185,19 @@ foreach ($ss_minsup as $sss) {
 
                             $transactionList = [];
 
+                            // logO("purchases", $purchases);
+
                             foreach ($purchases as $purchase) {
                                 $transactionList[] = $tidsets[$purchase];
                             }
 
+                            // logO("transactionList", $transactionList);
+
                             // Menemukan item yang ada di semua transaksi
+
                             $commonTransactions = call_user_func_array('array_intersect', $transactionList);
+
+                            // logO("commonTransactions", $commonTransactions);
 
                             foreach ($commonTransactions as $commonTransaction) {
                                 foreach ($tidsets as $item => $tidList) {
@@ -201,9 +210,35 @@ foreach ($ss_minsup as $sss) {
                                 }
                             }
 
+                            // // Implementasi algoritma Eclat untuk menemukan itemset yang sering muncul bersama
+                            // $support = 1; // Atur nilai support threshold di sini
+                            // $frequentItemsets = [];
+                            // foreach ($transactionList as $transaction) {
+                            //     foreach ($transaction as $item) {
+                            //         if (!isset($frequentItemsets[$item])) {
+                            //             $frequentItemsets[$item] = 0;
+                            //         }
+                            //         $frequentItemsets[$item]++;
+                            //     }
+                            // }
+
+                            // logO("frequentItemsets", $frequentItemsets);
+
+                            // foreach ($frequentItemsets as $item => $count) {
+                            //     if ($count >= $support && !in_array($item, $purchases)) {
+                            //         $associatedItems[$item] = $count;
+                            //     }
+                            // }
+
+                            $associatedItems = array_filter($associatedItems, function ($key) {
+                                return $key !== "";
+                            }, ARRAY_FILTER_USE_KEY);
+
                             // Pilih item dengan frekuensi terbanyak
                             arsort($associatedItems);
                             $topItem = key($associatedItems);
+
+                            // logO("topItem", $topItem);
 
                             return [$topItem];
                         }
@@ -246,15 +281,6 @@ foreach ($ss_minsup as $sss) {
                         //     return []; // Jika tidak ada item yang terkait
                         // }
 
-
-
-
-                        // Fungsi untuk menghitung support
-                        // function calculateSupport($tidsets, $item)
-                        // {
-                        //     return count($tidsets[$item]);
-                        // }
-
                         function calculateSupport($tidsets, $items, $sizeData)
                         {
                             $sumSupport = 0;
@@ -264,37 +290,37 @@ foreach ($ss_minsup as $sss) {
                                 $sumSupport += $getCount;
                             }
 
-                            // echo '<pre>';
-                            // print_r($sumSupport);
-                            // echo '</pre>';
+                            // logO("sumSupport", $sumSupport);
 
-                            return $sumSupport / $sizeData;
+                            return ($sumSupport / $sizeData) * 100;
                         }
 
-                        function calculateSupportForItems($tidsets, $items, $associatedItem)
+                        function calculateSupportAB($tidsets, $items, $associatedItems, $sizeData)
                         {
-                            $commonTransactions = call_user_func_array('array_intersect', array_map(function ($item) use ($tidsets) {
-                                return $tidsets[$item];
-                            }, $items));
+                            $sumSupport = 0;
 
-                            $commonTransactionsAssociated = $tidsets[$associatedItem];
+                            foreach ($items as $i) {
+                                $getCount = count($tidsets[$i]);
+                                $sumSupport += $getCount;
+                            }
 
-                            $support = count(array_intersect($commonTransactions, $commonTransactionsAssociated));
+                            foreach ($associatedItems as $i) {
+                                $getCount = count($tidsets[$i]);
+                                $sumSupport += $getCount;
+                            }
 
-                            return $support;
+                            return ($sumSupport / $sizeData) * 100;
                         }
-
-                        // $data = $conn->query("SELECT * FROM tbl_transaksi");
 
                         if ($tahun != null) {
-                            // logO($tahun);
                             $data = $conn->query("SELECT * FROM tbl_transaksi WHERE YEAR(tanggal) = $tahun AND MONTH(tanggal) = $bulan");
+                            // $data = $conn->query("SELECT * FROM tbl_transaksi");
 
                             $lengthData = $data->num_rows;
 
                             $tidsets = calculateTIDsets($data);
 
-                            $j = 0;
+                            $output = [];
 
                             foreach ($data as $d) {
                                 $itemsToAnalyze = [
@@ -306,45 +332,45 @@ foreach ($ss_minsup as $sss) {
 
                                 $associatedItems = findAssociation($tidsets, $itemsToAnalyze);
 
-                                $supportA = calculateSupport($tidsets, $itemsToAnalyze, $lengthData);
-                                // echo '<pre>';
-                                // print_r($supportA);
-                                // echo '</pre>';
-                                // return;
-                                $supportAB = calculateSupportForItems($tidsets, $itemsToAnalyze, $associatedItem);
-                                $confidence = $supportAB / $supportA;
+                                // logO("associatedItems", $associatedItems);
 
-                                if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup && $supportAB >= $minimsl_sup) {
-                                    if ($associatedItems[0] != "") {
-                                        // echo '<pre>';
-                                        // print_r($itemsToAnalyze);
-                                        // print_r("support: " . round($supportA, 2));
-                                        // print_r("\n");
-                                        // print_r("jumlah " . $itemsToAnalyze[0] . ": " . count($tidsets[$itemsToAnalyze[0]]));
-                                        // print_r("\n");
-                                        // print_r("jumlah " . $itemsToAnalyze[1] . ": " . count($tidsets[$itemsToAnalyze[1]]));
-                                        // print_r("\n");
-                                        // print_r("jumlah Data: " . $data->num_rows);
-                                        // print_r("\n");
-                                        // print_r("support real : " . (count($tidsets[$itemsToAnalyze[0]]) + count($tidsets[$itemsToAnalyze[1]])) / $data->num_rows);
-                                        // echo '</pre>';
+                                if ($associatedItems[0] != null) {
+                                    $supportA = calculateSupport($tidsets, $itemsToAnalyze, $lengthData);
+                                    $supportAB = calculateSupportAB($tidsets, $itemsToAnalyze, $associatedItems, $lengthData);
+                                    $confidence = $supportAB / $supportA;
 
-                                        echo "<tr>";
-                                        // echo "<td>Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems) . "\n";
-                                        echo "<td>Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems) . "\n";
-                                        echo "<td>" . round($supportA, 2) . "%</td>";
-                                        echo "<td>" . round($supportAB, 2) . "%</td>";
-                                        echo "<td>" . round($confidence, 2) . "%</td>";
-                                        echo "</tr>";
-
-                                        // if ($j > 1) {
-                                            // return;
-                                        // }
-
-
-                                        $j++;
+                                    if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup && $supportAB >= $minimsl_sup) {
+                                        array_push($output, [
+                                            "output" => "Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems),
+                                            "supportA" => round($supportA, 2),
+                                            "supportAB" => round($supportAB, 2),
+                                            "confidence" => round($confidence, 2)
+                                        ]);
                                     }
                                 }
+                            }
+
+
+                            $uniqueData = array_reduce($output, function ($carry, $item) {
+                                $output = $item['output'];
+
+                                if (!isset($carry[$output])) {
+                                    $carry[$output] = $item;
+                                }
+
+                                return $carry;
+                            }, []);
+
+                            $uniqueData = array_values($uniqueData);
+
+                            foreach ($uniqueData as $o) {
+                                echo "<tr>";
+                                // echo "<td>Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems) . "\n";
+                                echo "<td>" . $o["output"] . "\n";
+                                echo "<td>" . $o["supportA"] . "%</td>";
+                                echo "<td>" . $o["supportAB"] . "%</td>";
+                                echo "<td>" . $o["confidence"] . "%</td>";
+                                echo "</tr>";
                             }
                         }
 
