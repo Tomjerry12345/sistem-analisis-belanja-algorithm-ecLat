@@ -1,36 +1,38 @@
 <!DOCTYPE html>
-<?php $menu6="active"; ?>
+<?php $menu6 = "active"; ?>
 <?php
-    include "../config/koneksi.php";
+include "../config/koneksi.php";
 
-    $bulann = 0;
-    $tahunn = 0;
-    if (isset($_POST['lihat'])) {
-        $bulann = $_POST['bulan'];
-        $tahunn = $_POST['tahun'];
+$bulann = 0;
+$tahunn = 0;
+if (isset($_POST['lihat'])) {
+    $bulann = $_POST['bulan'];
+    $tahunn = $_POST['tahun'];
 
-        // die(print_r($tahunn));
-    }
+    // die(print_r($tahunn));
+}
 
-    // $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE date LIKE '%%/$bulann/$tahunn%%' ";
-    // $result = $conn->query($query);
+// $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE date LIKE '%%/$bulann/$tahunn%%' ";
+// $result = $conn->query($query);
 
-    $bulan = str_pad($bulann, 2, '0', STR_PAD_LEFT); // Menambahkan leading zero jika bulan hanya satu digit
-    $tahun = str_pad($tahunn, 4, '0', STR_PAD_LEFT); // Menambahkan leading zero jika tahun hanya satu digit
+$bulan = str_pad($bulann, 2, '0', STR_PAD_LEFT); // Menambahkan leading zero jika bulan hanya satu digit
+$tahun = str_pad($tahunn, 4, '0', STR_PAD_LEFT); // Menambahkan leading zero jika tahun hanya satu digit
 
-    $query  = "SELECT SUM(margin) AS keuntungan_rp FROM tbl_infaq WHERE DATE_FORMAT(date, '%Y-%m') = '$tahun-$bulan'";
-    $result = $conn->query($query);
+$query  = "SELECT SUM(margin) AS keuntungan_rp, SUM(keuntungan) AS sisa FROM tbl_infaq WHERE DATE_FORMAT(date, '%Y-%m') = '$tahun-$bulan'";
+$result = $conn->query($query);
 
 
-    if ($result) {
-        $row = $result->fetch_assoc();
-        $keuntungan_rp = number_format($row["keuntungan_rp"]);
-    } else {
-        $keuntungan_rp = "Tidak ada data";
-    }
+if ($result) {
+    $row = $result->fetch_assoc();
+    $keuntungan_rp = number_format($row["keuntungan_rp"]);
     $persentase = 2.5;
-    $hasil = ($persentase / 100) * $row["keuntungan_rp"];
-    $conn->close();
+    $hasil = ($persentase / 100) * $row["keuntungan_rp"] + $row["sisa"];
+} else {
+    $keuntungan_rp = "Tidak ada data";
+    $hasil = "Tidak ada data";
+}
+
+$conn->close();
 ?>
 
 <html>
@@ -49,41 +51,40 @@
             <h3>Informasi Infaq</h3>
             <hr>
 
-        <form action="" method="POST">
-        <label for="month">Pilih Bulan:</label>
-        <select name="bulan" id="bulan" style="padding: 7px">
-            <?php 
-            $months = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
-            foreach ($months as $key => $value) {
-                echo "<option value=\"$key\"";
-                if (isset($_POST['bulan']) && $_POST['bulan'] == $key) {
-                    echo ' selected="selected"';
-                }
-                echo ">$value</option>";
-            }
-            ?>
-        </select>
+            <form action="" method="POST">
+                <label for="month">Pilih Bulan:</label>
+                <select name="bulan" id="bulan" style="padding: 7px">
+                    <?php
+                    $months = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+                    foreach ($months as $key => $value) {
+                        echo "<option value=\"$key\"";
+                        if (isset($_POST['bulan']) && $_POST['bulan'] == $key) {
+                            echo ' selected="selected"';
+                        }
+                        echo ">$value</option>";
+                    }
+                    ?>
+                </select>
 
-        <label for="tahun">Pilih Tahun:</label>
-        <select name="tahun" id="tahun" style="padding: 7px">
-            <?php 
-            $years = array(1 => '2021');
-            foreach ($years as $key => $value) {
-                echo "<option value=\"$value\"";
-                if (isset($_POST['tahun']) && $_POST['tahun'] == $key) {
-                    echo ' selected="selected"';
-                }
-                echo ">$value</option>";
-            }
-            ?>
-        </select>
-        <button type="submit" name="lihat"
-                    style="color: #fff; background-color: #007bff; border-color: #007bff; padding: 7px; border: none;">Lihat
+                <label for="tahun">Pilih Tahun:</label>
+                <select name="tahun" id="tahun" style="padding: 7px">
+                    <?php
+                    $years = array(1 => '2021');
+                    foreach ($years as $key => $value) {
+                        echo "<option value=\"$value\"";
+                        if (isset($_POST['tahun']) && $_POST['tahun'] == $key) {
+                            echo ' selected="selected"';
+                        }
+                        echo ">$value</option>";
+                    }
+                    ?>
+                </select>
+                <button type="submit" name="lihat" style="color: #fff; background-color: #007bff; border-color: #007bff; padding: 7px; border: none;">Lihat
                     Hasil</button>
             </form>
             <br>
 
-        
+
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">

@@ -155,29 +155,6 @@ foreach ($ss_minsup as $sss) {
                             return $tidsets;
                         }
 
-                        // function findAssociation($tidsets, $purchases)
-                        // {
-                        //     $associatedItems = [];
-
-                        //     $transactionList = [];
-
-                        //     foreach ($purchases as $purchase) {
-                        //         $transactionList[] = $tidsets[$purchase];
-                        //     }
-
-                        //     // Menemukan item yang ada di semua transaksi
-                        //     $commonTransactions = call_user_func_array('array_intersect', $transactionList);
-
-                        //     foreach ($commonTransactions as $commonTransaction) {
-                        //         foreach ($tidsets as $item => $tidList) {
-                        //             if (in_array($commonTransaction, $tidList) && !in_array($item, $purchases)) {
-                        //                 $associatedItems[] = $item;
-                        //             }
-                        //         }
-                        //     }
-
-                        //     return array_unique($associatedItems);
-                        // }
 
                         function findAssociation($tidsets, $purchases)
                         {
@@ -185,63 +162,111 @@ foreach ($ss_minsup as $sss) {
 
                             $transactionList = [];
 
-                            // logO("purchases", $purchases);
-
                             foreach ($purchases as $purchase) {
                                 $transactionList[] = $tidsets[$purchase];
                             }
 
-                            // logO("transactionList", $transactionList);
+
 
                             // Menemukan item yang ada di semua transaksi
-
                             $commonTransactions = call_user_func_array('array_intersect', $transactionList);
 
-                            // logO("commonTransactions", $commonTransactions);
+                            // logO("transactionList", $commonTransactions);
+
+                            // return;
 
                             foreach ($commonTransactions as $commonTransaction) {
                                 foreach ($tidsets as $item => $tidList) {
                                     if (in_array($commonTransaction, $tidList) && !in_array($item, $purchases)) {
-                                        if (!isset($associatedItems[$item])) {
-                                            $associatedItems[$item] = 0;
-                                        }
-                                        $associatedItems[$item]++;
+                                        $associatedItems[] = $item;
                                     }
                                 }
                             }
 
-                            // // Implementasi algoritma Eclat untuk menemukan itemset yang sering muncul bersama
-                            // $support = 1; // Atur nilai support threshold di sini
-                            // $frequentItemsets = [];
-                            // foreach ($transactionList as $transaction) {
-                            //     foreach ($transaction as $item) {
-                            //         if (!isset($frequentItemsets[$item])) {
-                            //             $frequentItemsets[$item] = 0;
-                            //         }
-                            //         $frequentItemsets[$item]++;
-                            //     }
-                            // }
-
-                            // logO("frequentItemsets", $frequentItemsets);
-
-                            // foreach ($frequentItemsets as $item => $count) {
-                            //     if ($count >= $support && !in_array($item, $purchases)) {
-                            //         $associatedItems[$item] = $count;
-                            //     }
-                            // }
-
-                            $associatedItems = array_filter($associatedItems, function ($key) {
-                                return $key !== "";
-                            }, ARRAY_FILTER_USE_KEY);
-
-                            // Pilih item dengan frekuensi terbanyak
-                            arsort($associatedItems);
-                            $topItem = key($associatedItems);
-
-                            // logO("topItem", $topItem);
-
-                            return [$topItem];
+                            return array_unique($associatedItems);
                         }
+
+                        // function findAssociation($tidsets, $purchases, $support)
+                        // {
+                        //     $associatedItems = [];
+                        //     $transactionList = [];
+
+                        //     logO("purchases", $purchases);
+
+                        //     foreach ($purchases as $purchase) {
+                        //         $transactionList[] = $tidsets[$purchase];
+                        //     }
+
+                        //     foreach($transactionList as $key => $transaction) {
+                        //         $sumTransaction = count($transaction);
+                        //         logO("sumTransaction", $sumTransaction);
+
+                        //         if ($sumTransaction < $support) {
+                        //             unset($transactionList[$key]);
+                        //         }
+                        //     }
+
+                        //     if (count($transactionList) > 1) {
+                        //         for ($i=0; $i < count($transactionList); $i++) { 
+                        //             for ()
+                        //         }
+                        //     }
+
+
+
+                        //     logO("transactionList", $transactionList);
+
+                        //     // Menemukan item yang ada di semua transaksi
+
+                        //     $commonTransactions = call_user_func_array('array_intersect', $transactionList);
+
+                        //     logO("commonTransactions", $commonTransactions);
+
+                        //     foreach ($commonTransactions as $commonTransaction) {
+                        //         foreach ($tidsets as $item => $tidList) {
+                        //             if (in_array($commonTransaction, $tidList) && !in_array($item, $purchases)) {
+                        //                 if (!isset($associatedItems[$item])) {
+                        //                     $associatedItems[$item] = 0;
+                        //                 }
+                        //                 $associatedItems[$item]++;
+                        //             }
+                        //         }
+                        //     }
+
+                        //     // // Implementasi algoritma Eclat untuk menemukan itemset yang sering muncul bersama
+                        //     // $support = 1; // Atur nilai support threshold di sini
+                        //     // $frequentItemsets = [];
+                        //     // foreach ($transactionList as $transaction) {
+                        //     //     foreach ($transaction as $item) {
+                        //     //         if (!isset($frequentItemsets[$item])) {
+                        //     //             $frequentItemsets[$item] = 0;
+                        //     //         }
+                        //     //         $frequentItemsets[$item]++;
+                        //     //     }
+                        //     // }
+
+                        //     // logO("frequentItemsets", $frequentItemsets);
+
+                        //     // foreach ($frequentItemsets as $item => $count) {
+                        //     //     if ($count >= $support && !in_array($item, $purchases)) {
+                        //     //         $associatedItems[$item] = $count;
+                        //     //     }
+                        //     // }
+
+                        //     $associatedItems = array_filter($associatedItems, function ($key) {
+                        //         return $key !== "";
+                        //     }, ARRAY_FILTER_USE_KEY);
+
+                        //     logO("associatedItems", $associatedItems);
+
+                        //     // Pilih item dengan frekuensi terbanyak
+                        //     arsort($associatedItems);
+                        //     $topItem = key($associatedItems);
+
+                        //     // logO("topItem", $topItem);
+
+                        //     return [$topItem];
+                        // }
 
                         // function findAssociation($tidsets, $purchases)
                         // {
@@ -297,19 +322,32 @@ foreach ($ss_minsup as $sss) {
 
                         function calculateSupportAB($tidsets, $items, $associatedItems, $sizeData)
                         {
-                            $sumSupport = 0;
+                            // $sumSupport = 0;
 
-                            foreach ($items as $i) {
-                                $getCount = count($tidsets[$i]);
-                                $sumSupport += $getCount;
+                            // foreach ($items as $i) {
+                            //     $getCount = count($tidsets[$i]);
+                            //     $sumSupport += $getCount;
+                            // }
+
+                            // foreach ($associatedItems as $i) {
+                            //     $getCount = count($tidsets[$i]);
+                            //     $sumSupport += $getCount;
+                            // }
+
+                            // return ($sumSupport / $sizeData) * 100;
+
+                            $transactionList = [];
+
+                            foreach (array_merge($items, $associatedItems) as $associatedItem) {
+                                $transactionList[] = $tidsets[$associatedItem];
                             }
 
-                            foreach ($associatedItems as $i) {
-                                $getCount = count($tidsets[$i]);
-                                $sumSupport += $getCount;
-                            }
+                            // logO("transactionList", $transactionList);
 
-                            return ($sumSupport / $sizeData) * 100;
+                            $commonTransactions = call_user_func_array('array_intersect', $transactionList);
+
+
+                            return ((count($commonTransactions)) / $sizeData) * 100;
                         }
 
                         if ($tahun != null) {
@@ -324,24 +362,30 @@ foreach ($ss_minsup as $sss) {
 
                             foreach ($data as $d) {
                                 $itemsToAnalyze = [
-                                    $d["Item_1"], $d["Item_2"], $d["Item_3"], $d["Item_4"], $d["Item_5"], $d["Item_6"], $d["Item_7"],
-                                    $d["Item_8"], $d["Item_9"], $d["Item_10"], $d["Item_11"], $d["Item_12"], $d["Item_13"], $d["Item_14"], $d["Item_15"], $d["Item_16"]
+                                    $d["Item_1"], $d["Item_2"], $d["Item_3"],
+                                    $d["Item_4"], $d["Item_5"],
+                                    // $d["Item_6"], $d["Item_7"],
+                                    // $d["Item_8"], $d["Item_9"], $d["Item_10"], $d["Item_11"], $d["Item_12"], $d["Item_13"], $d["Item_14"], $d["Item_15"], $d["Item_16"]
                                 ];
 
                                 $itemsToAnalyze = array_filter($itemsToAnalyze);
 
+
                                 $associatedItems = findAssociation($tidsets, $itemsToAnalyze);
+
+                                // return;
 
                                 // logO("associatedItems", $associatedItems);
 
                                 if ($associatedItems[0] != null) {
                                     $supportA = calculateSupport($tidsets, $itemsToAnalyze, $lengthData);
-                                    $supportAB = calculateSupportAB($tidsets, $itemsToAnalyze, $associatedItems, $lengthData);
+                                    $supportAB = calculateSupportAB($tidsets, $itemsToAnalyze, array_slice($associatedItems, 0, 1), $lengthData);
                                     $confidence = $supportAB / $supportA;
 
-                                    if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup && $supportAB >= $minimsl_sup) {
+                                    if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup) {
                                         array_push($output, [
-                                            "output" => "Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems),
+                                            // "output" => "Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . implode(', ', $associatedItems),
+                                            "output" => "Jika membeli " . implode(' dan ', $itemsToAnalyze) . " maka akan membeli " . $associatedItems[0],
                                             "supportA" => round($supportA, 2),
                                             "supportAB" => round($supportAB, 2),
                                             "confidence" => round($confidence, 2)

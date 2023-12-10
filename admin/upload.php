@@ -52,8 +52,19 @@
         </div>
     </div>
 
+        <?php 
+            include "scripts.php"; 
+            $status = $_GET['status'] ?? '';
 
-        <?php include "scripts.php"; ?>
+            if ($status == "1") {
+                header("Location: upload.php");
+                echo '<script>
+                        alert("Berhasil upload");
+                        window.location.href = "upload.php";
+                    </script>';
+                exit();
+            }
+        ?>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 </body>

@@ -249,29 +249,27 @@ foreach ($ss_minsup as $sss) {
 
                         // $data = $conn->query("SELECT * FROM tbl_transaksi");
 
-                        logO($tahun);
-
                         if ($tahun != "null") {
                             $data = $conn->query("SELECT * FROM tbl_transaksi WHERE YEAR(tanggal) = $tahun AND MONTH(tanggal) = $bulan AND FLOOR((DAYOFMONTH(tanggal) - 1) / 7) + 1 = $minggu");
 
 
                             $tidsets = calculateTIDsets($data);
-    
+
                             foreach ($data as $d) {
                                 $itemsToAnalyze = [
                                     $d["Item_1"], $d["Item_2"], $d["Item_3"], $d["Item_4"], $d["Item_5"], $d["Item_6"], $d["Item_7"],
                                     $d["Item_8"], $d["Item_9"], $d["Item_10"], $d["Item_11"], $d["Item_12"], $d["Item_13"], $d["Item_14"], $d["Item_15"], $d["Item_16"]
                                 ];
-    
+
                                 $itemsToAnalyze = array_filter($itemsToAnalyze);
-    
+
                                 $associatedItems = findAssociation($tidsets, $itemsToAnalyze);
                                 $supportA = calculateSupport($tidsets, $itemsToAnalyze);
                                 $supportAB = calculateSupportForItems($tidsets, $itemsToAnalyze, $associatedItem);
                                 $confidence = $supportAB / $supportA;
-    
+
                                 // logO($associatedItems);
-    
+
                                 if ($confidence >= $minimsl_conf && $supportA >= $minimsl_sup && $supportAB >= $minimsl_sup) {
                                     if ($associatedItems[0] != "") {
                                         echo "<tr>";
@@ -283,10 +281,9 @@ foreach ($ss_minsup as $sss) {
                                     }
                                 }
                             }
-    
                         }
 
-                        
+
 
                         // Tambahkan di awal kode untuk menyimpan kombinasi unik
 
