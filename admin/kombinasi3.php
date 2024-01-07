@@ -69,7 +69,7 @@ foreach ($ss_minsup as $sss) {
             Kombinasi, Support A, Support A,B, Confidence (A,B)
             <hr>
 
-            <font style="font-family: 'Lucida Sans';" color=red>Jumlah Transaksi Sebanyak 1356 dengan Jumlah Item Sebanyak 282</font>
+            <font style="font-family: 'Lucida Sans';">Jumlah Transaksi Sebanyak 1356 dengan Jumlah Item Sebanyak 282</font>
             <br>
             <br>
             <form action="" method="POST">
@@ -235,7 +235,7 @@ foreach ($ss_minsup as $sss) {
 
                                 $associatedItems = findAssociation($tidsets, $itemA, $minimsl_sup);
 
-                                // logO("associatedItems", $associatedItems);
+                                logO("associatedItems", $associatedItems);
 
                                 if (!empty($associatedItems)) {
 
@@ -254,10 +254,6 @@ foreach ($ss_minsup as $sss) {
                                     $supportA = $last["support"];
 
                                     $resultB = [];
-
-
-
-
 
                                     foreach ($resultTranscation as $result) {
                                         foreach ($tidsets as $key => $value) {
@@ -306,8 +302,6 @@ foreach ($ss_minsup as $sss) {
                             }
 
                             $output = array_map("unserialize", array_unique(array_map("serialize", $output)));
-
-
 
                             // logO("output", $output);
 

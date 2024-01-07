@@ -73,7 +73,7 @@ $jumlahTransaksi = 0;
             Kombinasi, Support A, Support A,B, Confidence (A,B)
             <hr>
 
-            <font style="font-family: 'Lucida Sans';" color=red>Jumlah Transaksi Sebanyak <?= $lengthData ?> dengan Jumlah Item Sebanyak 828 </font>
+            <font style="font-family: 'Lucida Sans';">Jumlah Transaksi Sebanyak <?= $lengthData ?> dengan Jumlah Item Sebanyak 828 </font>
 
             <br>
             <br>
@@ -386,8 +386,8 @@ $jumlahTransaksi = 0;
                                 $itemsToAnalyze = [
                                     $d["Item_1"], $d["Item_2"], $d["Item_3"],
                                     $d["Item_4"], $d["Item_5"],
-                                    // $d["Item_6"], $d["Item_7"],
-                                    // $d["Item_8"], $d["Item_9"], $d["Item_10"], $d["Item_11"], $d["Item_12"], $d["Item_13"], $d["Item_14"], $d["Item_15"], $d["Item_16"]
+                                    $d["Item_6"], $d["Item_7"],
+                                    $d["Item_8"], $d["Item_9"], $d["Item_10"], $d["Item_11"], $d["Item_12"], $d["Item_13"], $d["Item_14"], $d["Item_15"], $d["Item_16"]
                                 ];
 
                                 $itemsToAnalyze = array_filter($itemsToAnalyze);

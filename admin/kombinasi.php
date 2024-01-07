@@ -185,7 +185,7 @@ function calculateSupportAB($tidsets, $items, $associatedItems, $sizeData)
                 $tidsets = calculateTIDsets($data);
 
                 // Kemudian, Anda bisa menampilkan jumlah transaksi dengan nilai yang baru di bagian HTML yang sesuai
-                echo '<font style="font-family: \'Lucida Sans\';" color=red>Jumlah Transaksi Sebanyak ' . $lengthData . ' dengan Jumlah Item Sebanyak ' . count($tidsets) . `</font>`;
+                echo '<font>Jumlah Transaksi Sebanyak ' . $lengthData . ' dengan Jumlah Item Sebanyak ' . count($tidsets) . `</font>`;
             }
             ?>
 
@@ -281,7 +281,7 @@ function calculateSupportAB($tidsets, $items, $associatedItems, $sizeData)
                                 if ($associatedItems[0] != null) {
 
                                     $supportAB = calculateSupportAB($tidsets, $itemsToAnalyze, array_slice($associatedItems, 0, 1,), $lengthData);
-                                    $confidence = $supportAB / $supportA;
+                                    $confidence = $supportAB / $supportA * 100;
 
                                     if ($supportA >= $minimsl_sup) {
                                         array_push($output, [

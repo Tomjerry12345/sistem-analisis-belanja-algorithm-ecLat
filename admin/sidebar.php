@@ -5,7 +5,7 @@
     <a class="<?php echo $menu2; ?>" href="visual.php"><i class="fa fa-bar-chart"></i><span>Frequent Item Sets Visualization</span></a>
     <a class="<?php echo $menu3; ?>" href="group.php"><i class="fa fa-table"></i><span>Frequent Item Sets Group</span></a>
     <a class="<?php echo $menu4; ?>" href="total.php"><i class="fa fa-object-group"></i><span>Frequent Item Sets Total</span></a>
-    <a class="<?php echo $menu5; ?>" href="kombinasi.php"><i class="fa fa-tasks"></i><span>Kombinasi EClaT</span></a>
+    <a class="<?php echo $menu5; ?>" href="kombinasi5.php"><i class="fa fa-tasks"></i><span>Kombinasi EClaT</span></a>
     <a class="<?php echo $menu6; ?>" href="infaq.php"><i class="fa fa-cog"></i><span>Infaq</span></a>
     <a href="config/logout.php"><i class="fa fa-sign-out"></i><span>Logout</span></a>
 </div>
